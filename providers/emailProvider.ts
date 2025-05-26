@@ -25,8 +25,12 @@ export const emailProvider: NamedProvider = {
         return null;
       }
 
-      const emailService = emailPlugin.services[0] as IEmailService;
-      return emailService;
+      const emailService = emailPlugin.services[0];
+      if (!emailService || !('send' in emailService) || !('receive' in emailService)) {
+        elizaLogger.error("Email service does not have required methods");
+        return null;
+      }
+      return emailService as unknown as IEmailService;
     } catch (error) {
       elizaLogger.error("Error in emailProvider:", error);
       return null;

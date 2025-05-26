@@ -37,9 +37,9 @@ export const sendCustomerEmailAction: Action = {
 
     handler: async (runtime: IAgentRuntime, message: Memory, state?: State) => {
         try {
-            const emailService = runtime.services.get('email' as ServiceType) as IEmailService;
-            if (!emailService) {
-                console.error('Email service not available');
+            const emailService = runtime.services.get('email' as ServiceType);
+            if (!emailService || !('send' in emailService)) {
+                console.error('Email service not available or does not have send method');
                 return false;
             }
 
@@ -52,7 +52,7 @@ export const sendCustomerEmailAction: Action = {
 
             console.log('Sending email with details:', emailDetails);  // Debug log
             
-            const result = await emailService.send(emailDetails as SendEmailOptions);
+            const result = await (emailService as unknown as IEmailService).send(emailDetails as SendEmailOptions);
             return result.success;
         } catch (error) {
             console.error('Error sending email:', error);
@@ -104,16 +104,16 @@ export const getCustomerEmailsAction: Action = {
 
     handler: async (runtime: IAgentRuntime, message: Memory, state?: State) => {
         try {
-            const emailService = runtime.services.get("email" as ServiceType) as IEmailService;
-            if (!emailService) {
-                throw new Error("Email service not found");
+            const emailService = runtime.services.get("email" as ServiceType);
+            if (!emailService || !('receive' in emailService)) {
+                throw new Error("Email service not found or does not have receive method");
             }
 
             console.log("Starting email retrieval...");
             const emails: EmailContent[] = [];
 
             await new Promise<void>((resolve) => {
-                emailService.receive((mail: EmailContent) => {
+                (emailService as unknown as IEmailService).receive((mail: EmailContent) => {
                     console.log("Received email:", mail);
                     emails.push(mail);
                 });

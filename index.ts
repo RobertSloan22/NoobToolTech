@@ -16,7 +16,6 @@ import fs from "fs";
 import net from "net";
 import path from "path";
 import { fileURLToPath } from "url";
-import { initializeDbCache } from "./cache/index.ts";
 import { character as baseCharacter } from "./character.ts";
 import { startChat } from "./chat/index.ts";
 import { initializeClients } from "./clients/index.ts";
@@ -226,8 +225,9 @@ async function startAgent(character: Character, directClient: DirectClient) {
       db = createInMemoryDb();
     }
 
-    const cache = initializeDbCache(character, db);
-    elizaLogger.debug(`Cache initialized for ${character.name}`);
+    // Cache initialization removed - not available in codebase
+    const cache = undefined; // Will use default caching
+    elizaLogger.debug(`Using default cache for ${character.name}`);
     
     try {
       elizaLogger.debug(`Creating agent runtime for ${character.name} with fixed ID: ${FIXED_AGENT_ID}`);

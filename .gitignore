@@ -1,0 +1,6 @@
+.env
+CLAUDE.md
+db.sqlite
+model.gguf
+node_modules/
+pnpm-lock.yaml
